@@ -1,0 +1,160 @@
+Web API协议说明 v1.0
+API说明格式:
+<api name="标识符" method="调用方式" desc="功能描述">
+	<params>
+		<param name="参数名" type="类型" method="是GET还是POST,若不指定,则同API的调用方式" ? defvalue="默认值,可无" ? desc="说明">
+			<value value="特殊值" desc="说明" /> *
+		</param> +
+	</params> ?
+	<notice>注意事项</notice> ?
+	<return type="返回类型">返回值</return>
+</api>
+
+类型说明串:
+二进制(以base64编码进行传递):
+binary, (gif,png,bmp,jpg), (zip,rar), (wav,wma,mp3,wmv,avi), (ra,rm,rmvb)
+基本类型:
+void,boolean,byte,short,ushort,int,uint,long,ulong,string,text
+结构文本型:
+html,xml,json,uri
+它们的衍生型:
+XmlRecord,XmlRecordset,JsonRecord,JsonRecordset,UriRecord,UriRecordset
+XmlArray,JsonArray,UriArray
+XmlObject,JsonObject,UriObject
+
+※ 关于uri型数据, 构造时, 每个k=v对的等号后面的v必须UriEscape()一次, 解析时, 每个k=v对的等号后面的v必须UriUnescape()一次, k=v对间用&分开
+
+记录返回格式:
+XmlRecord:
+<?xml version="1.0" encoding="gbk" ?>
+<recordset recordcount="记录数" fields="字段" error="是否错误" errstr="错误串">
+<record>
+	<fieldname>data</fieldname> +
+</record> ?
+</recordset>
+
+JsonRecord:
+recordset:{
+	recordcount:记录数,
+	fields:字段,
+	error:是否错误,
+	errstr:错误串,
+	record:[
+		{
+			fieldname:data, +
+		} ?
+	]
+}
+
+UriRecord(用{}表示需要换码的值):
+{recordset}={
+	{recordcount}={记录数}&
+	{fields}={字段}&
+	{error}={是否错误}&
+	{errstr}={错误串}&
+	{record[]}={
+		fieldname={data}& +
+	} ?
+}
+记录集返回格式:
+XmlRecordset:
+<?xml version="1.0" encoding="gbk" ?>
+<rows whr="WHERE条件" rs_count="总记录条数" ppc="每页条数" pc="页数" p="页号">
+<recordset recordcount="记录数" fields="字段" error="是否错误" errstr="错误串">
+<record>
+	<fieldname>data</fieldname> +
+</record> *
+</recordset>
+</rows>
+
+JsonRecordset:
+rows:{
+	whr:WHERE条件,
+	rs_count:总记录条数,
+	ppc:每页条数,
+	pc:页数,
+	p:页号,
+	recordset:{
+		recordcount:记录数,
+		fields:字段,
+		error:是否错误,
+		errstr:错误串,
+		record:[
+			{
+				fieldname:data, +
+			} *
+		]
+	}
+}
+
+UriRecordset:
+{rows}={
+	{whr}={WHERE条件}&
+	{rs_count}={总记录条数}&
+	{ppc}={每页条数}&
+	{pc}={页数}&
+	{p}={页号}&
+	{recordset}={
+		{recordcount}={记录数}&
+		{fields}={字段}&
+		{error}={是否错误}&
+		{errstr}={错误串}&
+		{record[]}={
+			fieldname={data}& +
+		}& *
+	}
+}
+数组返回格式(XmlArray,JsonArray,UriArray):
+XmlArray:
+<?xml version="1.0" encoding="gbk" ?>
+<array count="元素个数" type="类型说明串">
+	<element>数据</element> *
+</array>
+
+JsonArray:
+array:{
+	count:元素个数,
+	type:类型说明串,
+	element:[
+		数据, *
+	]
+}
+
+UriArray:
+{array}={
+	{count}={元素个数}&
+	{type}={类型说明串}&
+	{element[]}={数据}& *
+}
+
+
+对象返回格式(XmlObject,JsonObject,UriObject):
+XmlObject:
+<?xml version="1.0" encoding="gbk" ?>
+<object classname="类名">
+<properties>
+	<属性名>
+		<type>类型说明串</type>
+		<value>数据</value>
+	</属性名> +
+</properties>
+</object>
+
+JsonObject:
+object:{
+	classname:类名,
+	properties:{
+		属性名:{type:类型说明串,value:数据} +
+	}
+}
+
+UriObject:
+{object}={
+	{classname}={类名}&
+	{properties}={
+		{属性名}={
+			{type}={类型说明串}&
+			{value}={数据}
+		}& +
+	}
+}
